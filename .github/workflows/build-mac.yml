@@ -1,1 +1,32 @@
+name: Build macOS App
 
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          
+      - name: Instalar dependencias
+        run: |
+          pip install pyinstaller pandas openpyxl
+          
+      - name: Compilar con PyInstaller
+        run: |
+          pyinstaller --onefile --windowed --name="Convertidor_KMZ" convertidor_kmz.py
+          
+      - name: Subir archivo generado
+        uses: actions/upload-artifact@v4
+        with:
+          name: Convertidor_KMZ-macOS
+          path: dist/Convertidor_KMZ.app
